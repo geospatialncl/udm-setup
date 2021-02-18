@@ -113,11 +113,7 @@ def run(data_dir='/outputs', layers={'buildings': {'year': 2011}, }, area_codes=
     # get environmental variables
     conf = get_environment_variables()
 
-    # if a fishnet is not passed, create layer
-    if fishnet is None:
-        #
-        generate_fishnet(lads=area_codes)
-
+    # loop through the passed layers, download data and rasterise
     for layer_name in layers.keys():
         if layer_name == 'topographic':
             name = layer_name
