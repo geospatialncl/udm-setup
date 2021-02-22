@@ -53,7 +53,7 @@ def generate_fishnet(data_dir='/outputs', output_file='fishnet_100m.tif', bbox=[
     return fishnet_geojson
 
 
-def rasterise(geojson_data, fishnet=None, area_scale='lad', area_codes=['E08000021'], output_filename='output_raster.tif'):
+def rasterise(data, fishnet=None, area_scale='lad', area_codes=['E08000021'], output_filename='output_raster.tif'):
     """
     Rasterise a set of data
     """
@@ -62,7 +62,7 @@ def rasterise(geojson_data, fishnet=None, area_scale='lad', area_codes=['E080000
 
     if fishnet is None:
         Rasteriser(
-            geojson_data,  # Extracted GeoJSON data
+            data,  # Extracted GeoJSON data
             area_codes=area_codes,  # Boundary specified either by area codes OR
             scale=area_scale,  # Scale to look at (oa|lad|gor)
             output_filename=output_filename,  # Output filename
@@ -74,7 +74,7 @@ def rasterise(geojson_data, fishnet=None, area_scale='lad', area_codes=['E080000
         ).create()
     else:
         Rasteriser(
-            geojson_data,  # Extracted GeoJSON data
+            data,  # Extracted GeoJSON data
             fishnet=fishnet,    # Fishnet grid GeoJSON
             output_filename=output_filename,  # Output filename
             output_format='GeoTIFF',  # Raster output file format (GeoTIFF|ASCII)
@@ -110,7 +110,7 @@ def process_response(response, layer_name, data_dir):
     return gdf.to_json()
 
 
-def run(data_dir='/outputs', files=[], layers={}, area_codes=['E00042673',], area_scale='oa', fishnet=None):
+def run_processing(data_dir='/outputs', files=[], layers={}, area_codes=['E00042673',], area_scale='oa', fishnet=None):
     """
     Inputs:
     - LAD: a local authority district code
@@ -125,32 +125,33 @@ def run(data_dir='/outputs', files=[], layers={}, area_codes=['E00042673',], are
 
     # if no fishnet passed
     # by generating fishnet now it ensures all raster layers generated use the same fishnet
-    fishnet_filepath = None
     if fishnet is None:
         # temp method until below is sorted
         fishnet_filepath = generate_fishnet(lads=['E08000021',])
-
+        print('Here - %s' % fishnet_filepath)
         #if area_scale == 'oa':
         #    print('This method is not supported yet')
         #    # need to fetch the lads the OA's fall in
         #    exit(2)
         #else:
         #    fishnet_filepath = generate_fishnet(lads=area_codes)
+    else:
+        # set the fishnet file path
+        fishnet_filepath = fishnet
 
     # read in fishnet now so can be used in rasterise process do now so only done once if multiple layers
     # read fishnet in with geopandas (seems more stable than with json or geojson libraries)
-    fnet = geopandas.read_file(fishnet_filepath)
+    fnet = geopandas.read_file(fishnet_filepath, encoding='utf-8')
 
     # if a list of files is passed, allow these to be rasterised using a fishnet, either passed or generated
     if len(files) != 0:
         for file in files:
-            gdf = geopandas.read_file(fishnet_filepath)
-
+            data_gdf = geopandas.read_file(file, encoding='utf-8')
             # name the output after the input file - get the name of the input file
             output_filename = file.split('/')[-1]
 
             # run rasterise process
-            rasterise(data=gdf.to_json(), fishnet=fnet.to_json(), output_filename=output_filename)
+            rasterise(data=data_gdf.to_json(), fishnet=fnet.to_json(), output_filename=output_filename)
 
     # loop through the passed layers, download data and rasterise
     for layer_name in layers.keys():
@@ -224,7 +225,59 @@ def run(data_dir='/outputs', files=[], layers={}, area_codes=['E00042673',], are
     return
 
 
+def run():
+    """
+    Entry point.
+    Parse passed arguments.
+
+    Should include:
+    - fishnet (optional - required for now)
+        - a single file path
+    - rasterise_files (optional - required for now)
+        - a list of files, each with a complete filepath
+    """
+
+    fishnet_file = None
+    files_to_rasterise = None
+
+    # get the fishnet file
+    fishnet_file = os.getenv('FISHNET')
+    if fishnet_file is None:
+        print('Error! Missing required parameter - FISHNET')
+        #exit(2)
+    else:
+        # check file exists
+        if not os.path.exists(fishnet_file):
+            print('Could not find file - %s' % fishnet_file)
+            exit(2)
+        print(fishnet_file)
+
+    # get the list of files to rasterise
+    files_to_rasterise = os.getenv('FILES')
+
+    if files_to_rasterise is None:
+        print('Error! Missing required parameter - FILES')
+        exit(2)
+    else:
+        # split string into list
+        files_to_rasterise = files_to_rasterise.split(',')
+
+    # loop through files
+    for file in files_to_rasterise:
+        # check files exist
+        print(file)
+        if not os.path.exists(file):
+            print('Could not find file - %s' % file)
+            exit(2)
+
+    run_processing(files=files_to_rasterise, fishnet=fishnet_file)
+    return
+
+
+if __name__ == '__main__':
+    run()
+
 #generate_fishnet(lads=['E08000021'])
 #generate_fishnet()
-run(layers={'water-bodies':{}}, area_codes='E08000021', area_scale='lad')
-#run(layers={'current-dev':{}})
+#run_processing(layers={'water-bodies':{}}, area_codes='E08000021', area_scale='lad')
+#run_processing(layers={'current-dev':{}})
