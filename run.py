@@ -59,7 +59,7 @@ def rasterise(data, fishnet=None, area_scale='lad', area_codes=['E08000021'], ou
     """
     if '.' not in output_filename:
         output_filename = output_filename+'.tif'
-
+    print(output_filename)
     if fishnet is None:
         Rasteriser(
             data,  # Extracted GeoJSON data
@@ -73,6 +73,7 @@ def rasterise(data, fishnet=None, area_scale='lad', area_codes=['E08000021'], ou
             nodata=1
         ).create()
     else:
+        print('rasterising using existing fishnet')
         Rasteriser(
             data,  # Extracted GeoJSON data
             fishnet=fishnet,    # Fishnet grid GeoJSON
@@ -127,8 +128,8 @@ def run_processing(data_dir='/outputs', files=[], layers={}, area_codes=['E00042
     # by generating fishnet now it ensures all raster layers generated use the same fishnet
     if fishnet is None:
         # temp method until below is sorted
-        fishnet_filepath = generate_fishnet(lads=['E08000021',])
-        print('Here - %s' % fishnet_filepath)
+        fishnet_filepath = generate_fishnet(lads=area_codes)
+
         #if area_scale == 'oa':
         #    print('This method is not supported yet')
         #    # need to fetch the lads the OA's fall in
@@ -146,12 +147,17 @@ def run_processing(data_dir='/outputs', files=[], layers={}, area_codes=['E00042
     # if a list of files is passed, allow these to be rasterised using a fishnet, either passed or generated
     if len(files) != 0:
         for file in files:
+            print('Rasterising file %s' % file)
             data_gdf = geopandas.read_file(file, encoding='utf-8')
             # name the output after the input file - get the name of the input file
             output_filename = file.split('/')[-1]
+            output_filename = output_filename.split('.')[0]
 
             # run rasterise process
             rasterise(data=data_gdf.to_json(), fishnet=fnet.to_json(), output_filename=output_filename)
+
+            # copy output from rasteriser output dir to outputs dir
+            copyfile('/udm-rasteriser/data/%s.tif' % output_filename, '/outputs/%s.tif' % output_filename)
 
     # loop through the passed layers, download data and rasterise
     for layer_name in layers.keys():
@@ -231,26 +237,40 @@ def run():
     Parse passed arguments.
 
     Should include:
-    - fishnet (optional - required for now)
+    - fishnet (optional)
         - a single file path
+        - e.g. /inputs/fishnet.geojson
     - rasterise_files (optional - required for now)
         - a list of files, each with a complete filepath
+        - e.g. '/inputs/file1.geojson,/inputs/file2.geojson'
+    - lads (optional)
+        - a list of lads to generate the fishnet from
+        - e.g. 'E08000021,E08000020'
     """
 
     fishnet_file = None
     files_to_rasterise = None
+    lads = None
+    bbox = None
 
     # get the fishnet file
     fishnet_file = os.getenv('FISHNET')
-    if fishnet_file is None:
-        print('Error! Missing required parameter - FISHNET')
-        #exit(2)
-    else:
+    if fishnet_file is not None:
         # check file exists
         if not os.path.exists(fishnet_file):
             print('Could not find file - %s' % fishnet_file)
             exit(2)
-        print(fishnet_file)
+        #print(fishnet_file)
+    else:
+        print('Error! Missing required parameter - FISHNET')
+        exit(2)
+        
+    # get the list if lads
+    #lads = os.getenv('LADS')
+    #if lads is not None:
+    #    # split string into list
+    #    lads = lads.split(',')
+
 
     # get the list of files to rasterise
     files_to_rasterise = os.getenv('FILES')
@@ -270,7 +290,7 @@ def run():
             print('Could not find file - %s' % file)
             exit(2)
 
-    run_processing(files=files_to_rasterise, fishnet=fishnet_file)
+    run_processing(files=files_to_rasterise, fishnet=fishnet_file, area_codes=lads)
     return
 
 
