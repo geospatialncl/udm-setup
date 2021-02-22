@@ -45,7 +45,7 @@ def generate_fishnet(data_dir='/outputs', output_file='fishnet_100m.tif', bbox=[
 
     # copy fishnet file to docker shared directory
     if os.path.isfile('/udm-rasteriser/data/fishnet'):
-        copyfile('/udm-rasteriser/data/fishnet', '/outputs/fishnet')
+        copyfile('/udm-rasteriser/data/fishnet', '/outputs/fishnet.geojson')
     else:
         print('Error! Fishnet file was not created.')
         exit(2)
@@ -57,6 +57,8 @@ def rasterise(geojson_data, fishnet=None, area_scale='lad', area_codes=['E080000
     """
     Rasterise a set of data
     """
+    if '.' not in output_filename:
+        output_filename = output_filename+'.tif'
 
     if fishnet is None:
         Rasteriser(
@@ -108,7 +110,7 @@ def process_response(response, layer_name, data_dir):
     return gdf.to_json()
 
 
-def run(data_dir='/outputs', files=[], layers={'buildings': {'year': 2011}, 'water-bodies': {'year': 2011}}, area_codes=['E00042673',], area_scale='oa', fishnet=None):
+def run(data_dir='/outputs', files=[], layers={}, area_codes=['E00042673',], area_scale='oa', fishnet=None):
     """
     Inputs:
     - LAD: a local authority district code
@@ -147,11 +149,12 @@ def run(data_dir='/outputs', files=[], layers={'buildings': {'year': 2011}, 'wat
             # name the output after the input file - get the name of the input file
             output_filename = file.split('/')[-1]
 
-            rasterise(data=gdf.to_json(), fishnet=fnet.to_json())
+            # run rasterise process
+            rasterise(data=gdf.to_json(), fishnet=fnet.to_json(), output_filename=output_filename)
 
     # loop through the passed layers, download data and rasterise
     for layer_name in layers.keys():
-        if layer_name == 'topographic':
+        if layer_name == 'topographic' or layer_name == 'current-dev':
             layer = layers[layer_name]
             request_string = '%s/data/mastermap/areas?export_format=geojson&scale=%s&area_codes=%s&classification_codes=all' % (conf['api_url'], area_scale, ''.join(area_codes))
 
@@ -166,32 +169,62 @@ def run(data_dir='/outputs', files=[], layers={'buildings': {'year': 2011}, 'wat
 
         elif layer_name == 'water-bodies':
             layer = layers[layer_name]
-            request_string = '%s/data/mastermap/areas?export_format=geojson&scale=%s&area_codes=%s&classification_codes=all&year=2017' % (conf['api_url'], area_scale, ''.join(area_codes))
+            request_string = '%s/data/mastermap/areas?export_format=geojson&geom_foramt=geojson&scale=%s&area_codes=%s&classification_codes=all&year=2017&theme=Water&flatten_lists=True' % (conf['api_url'], area_scale, ''.join(area_codes))
 
             response = requests.get(request_string, auth=(conf['username'], conf['password']))
 
         # process response
         data = process_response(response=response, layer_name=layer_name, data_dir=data_dir)
-        data_json = json.loads(data)
-        print(data_json['features'][0])
+
+        # convert data to a geopandas dataframe
+        gdf = geopandas.read_file(data)
+
         # if any post querying process required
         if layer_name == 'water-bodies':
-            gdf = geopandas.read_file(data)
-            print(gdf.columns)
+            # filter data
+            #print(gdf.columns)
+            #print(gdf['theme'].head())
 
+            # convert to json for rasterising
+            data = gdf.to_json()
+
+        elif layer_name == 'current-dev':
+            # filter data
+            # developed land
+            gdf_result = gdf.loc[gdf['theme'] == 'Land']
+            gdf_result = gdf_result.loc[gdf_result['make'] == 'Multiple']
+            # buildings
+            gdf_blds = gdf.loc[gdf['descriptive_group'] == 'Buildings']
+            gdf_blds = gdf_blds.loc[gdf_blds['make'] == 'Manmade']
+            # rail
+            gdf_rail = gdf.loc[gdf['descriptive_group'] == 'Rail']
+            gdf_rail = gdf_rail.loc[gdf_rail['make'] == 'Manmade']
+            # roads
+            gdf_roads = gdf.loc[gdf['descriptive_group'] == 'Roads']
+            gdf_roads = gdf_roads.loc[gdf_roads['make'] == 'Manmade'] & gdf_roads.loc[gdf_roads['make'] == 'Unknown']
+            # roadside
+            gdf_roadside = gdf.loc[gdf['descriptive_group'] == 'Roadside']
+            gdf_roadside = gdf_roadside.loc[gdf_roadside['make'] == 'Natural']
+
+            #gdf_result.append(gdf_blds).append(gdf_rail).append(gdf_roads).append(gdf_roadside)
+
+            # convert to json for rasterising
+            data = gdf_result.to_json()
 
         # run rasterise process
         if fishnet_filepath is not None:
-            rasterise(data, fishnet=fnet.to_json())
+            rasterise(data, fishnet=fnet.to_json(), output_filename=layer_name)
         else:
             print('Warning: This method is going to be removed.')
-            rasterise(data, area_codes='E08000021', area_scale='lad')
+            rasterise(data, area_codes='E08000021', area_scale='lad', output_filename=layer_name)
 
         # copy output from rasteriser output dir to outputs dir
-        copyfile('/udm-rasteriser/data/output_raster.tif', '/outputs/output_raster.tif')
+        copyfile('/udm-rasteriser/data/%s.tif' % layer_name, '/outputs/%s.tif' % layer_name)
 
     return
 
 
 #generate_fishnet(lads=['E08000021'])
-run(layers={'water-bodies':{}})
+#generate_fishnet()
+run(layers={'water-bodies':{}}, area_codes='E08000021', area_scale='lad')
+#run(layers={'current-dev':{}})
