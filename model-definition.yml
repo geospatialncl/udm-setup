@@ -1,0 +1,36 @@
+# model-definition.yml
+
+kind: Model
+apiVersion: v1alpha4
+
+metadata:
+  displayName: UDM Setup
+  name: udm-setup
+  summary: Allows for data preparation for inputs into the full UDM model.
+  description: >
+    The model allow for vector data to be rasterized to a common fishnet/grid as required for inputs into the UDM (Urban
+    Development model). Data to be rasterized can be supplied as vector files (.geojson, .gpkg) and using the same input
+    grid, supplied in a similar vector format (.geojson, .gpkg), will each be output as rasters (as .tif).
+
+    Further updates will add additional features including using data from NISMOD-DB API to generate a fishet to be used
+    and also for the input vector data to be rasterized.
+  type: data-processing
+
+spec:
+  inputs:
+    env:
+      # no env need setting for this version
+    dataslots:
+      - name: Fishnet
+        description: >
+          A grid/fishnet vector format file (.geojson, .gpkg)
+        default:
+          - uid: d37c7218-4f3d-44eb-8a4c-8ad08bbe5d20
+            versionUid: 9aab4978-a60a-41bc-a36e-f8752f989d59
+        path: inputs/fishnet
+        required: true
+      - name: Features
+        description: >
+          A file containing vector features to rasterize (.geojson, .gpkg)
+        path: inputs/vectorfiles
+        required: true
