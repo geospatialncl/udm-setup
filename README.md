@@ -1,5 +1,7 @@
 # udm-setup
-Setup data for UDM
+[![build](https://github.com/geospatialncl/udm-setup/build/badge.svg)](https://github.com/OpenCLIM/udm-dafni/actions) 
+
+Setup data for UDM model. Currenly only method 2 below is operational, with others to be enabled with further updates.
 
 ## Usage
 Three usage patterns:  
