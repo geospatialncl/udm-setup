@@ -30,7 +30,7 @@ def get_environment_variables():
     if conf['api_url'] is None:
         # need to load in file
         print('ERROR! Could not find the required environmental variables')
-        exit(2)
+        exit(1)
 
     return conf
 
@@ -54,7 +54,7 @@ def generate_fishnet(data_dir='/outputs', output_file='fishnet_100m.tif', bbox=[
         copyfile('/udm-rasteriser/data/fishnet', '/outputs/fishnet.geojson')
     else:
         print('Error! Fishnet file was not created.')
-        exit(2)
+        exit(1)
 
     return fishnet_geojson
 
@@ -151,7 +151,7 @@ def run_processing(output_dir='/data/outputs', files=[], layers={}, area_codes=[
         #if area_scale == 'oa':
         #    print('This method is not supported yet')
         #    # need to fetch the lads the OA's fall in
-        #    exit(2)
+        #    exit(1)
         #else:
         #    fishnet_filepath = generate_fishnet(lads=area_codes)
     else:
@@ -282,7 +282,7 @@ def run():
     # check set dirs exist
     if not os.path.exists(input_dir):
         print('ERROR! Input directory could not be found!')
-        exit(2)
+        exit(1)
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
 
@@ -290,10 +290,10 @@ def run():
     fishnet_file = glob.glob(os.path.join(input_dir, 'fishnet', '*.gpkg')) + glob.glob(os.path.join(input_dir, 'fishnet', '*.geojson'))
     if len(fishnet_file) == 0:
         print('ERROR! No fishnet file found in dir (%s).' % os.path.join(input_dir, 'fishnet'))
-        exit(2)
+        exit(1)
     elif len(fishnet_file) > 1:
         print('ERROR! More than one fishnet file found (%s). Only one is required.' % fishnet_file)
-        exit(2)
+        exit(1)
     else:
         fishnet_file = fishnet_file[0]
 
