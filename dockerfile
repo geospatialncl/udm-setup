@@ -9,7 +9,8 @@ RUN git clone --branch dafni https://github.com/geospatialncl/udm-rasteriser
 #RUN pip install -r udm-rasteriser/requirements.txt
 
 COPY run.py /
+RUN mkdir /data
 RUN mkdir /inputs
-RUN mkdir /outputs
+RUN mkdir /data/outputs
 
 ENTRYPOINT python run.py

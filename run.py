@@ -9,7 +9,7 @@ Issues
 - Write all data to a single directory or other output method?
 """
 
-import requests, json, os, sys, geojson
+import requests, json, os, sys, glob
 sys.path.insert(0, "/udm-rasteriser")
 from classes import Config, FishNet, Rasteriser
 from geopandas import GeoDataFrame
@@ -111,7 +111,18 @@ def process_response(response, layer_name, data_dir):
     return gdf.to_json()
 
 
-def run_processing(data_dir='/outputs', files=[], layers={}, area_codes=['E00042673',], area_scale='oa', fishnet=None):
+def move_output(file_name, output_dir):
+    """
+    Move the file from the rasterise output dir to the model output dir
+    """
+    print('Copying file: %s' %file_name)
+    # copy output from rasteriser output dir to outputs dir
+    copyfile('/udm-rasteriser/data/%s.tif' % file_name, os.path.join(output_dir, '%s.tif' % file_name))
+    print(os.listdir(output_dir))
+    return
+
+
+def run_processing(output_dir='/data/outputs', files=[], layers={}, area_codes=['E00042673',], area_scale='oa', fishnet=None):
     """
     Inputs:
     - LAD: a local authority district code
@@ -128,7 +139,7 @@ def run_processing(data_dir='/outputs', files=[], layers={}, area_codes=['E00042
     # by generating fishnet now it ensures all raster layers generated use the same fishnet
     if fishnet is None:
         # temp method until below is sorted
-        fishnet_filepath = generate_fishnet(lads=area_codes)
+        fishnet_filepath = generate_fishnet(data_dir=output_dir, lads=area_codes)
 
         #if area_scale == 'oa':
         #    print('This method is not supported yet')
@@ -156,8 +167,7 @@ def run_processing(data_dir='/outputs', files=[], layers={}, area_codes=['E00042
             # run rasterise process
             rasterise(data=data_gdf.to_json(), fishnet=fnet.to_json(), output_filename=output_filename)
 
-            # copy output from rasteriser output dir to outputs dir
-            copyfile('/udm-rasteriser/data/%s.tif' % output_filename, '/outputs/%s.tif' % output_filename)
+            move_output(output_filename, output_dir)
 
     # loop through the passed layers, download data and rasterise
     for layer_name in layers.keys():
@@ -225,8 +235,7 @@ def run_processing(data_dir='/outputs', files=[], layers={}, area_codes=['E00042
             print('Warning: This method is going to be removed.')
             rasterise(data, area_codes='E08000021', area_scale='lad', output_filename=layer_name)
 
-        # copy output from rasteriser output dir to outputs dir
-        copyfile('/udm-rasteriser/data/%s.tif' % layer_name, '/outputs/%s.tif' % layer_name)
+        move_output(layer_name, output_dir)
 
     return
 
@@ -248,49 +257,23 @@ def run():
         - e.g. 'E08000021,E08000020'
     """
 
+    input_path = '/inputs'
+    output_dir = '/data/outputs'
+
+    # declare as None, future updates will use these to check for valid set of inputs
     fishnet_file = None
     files_to_rasterise = None
     lads = None
     bbox = None
 
     # get the fishnet file
-    fishnet_file = os.getenv('FISHNET')
-    if fishnet_file is not None:
-        # check file exists
-        if not os.path.exists(fishnet_file):
-            print('Could not find file - %s' % fishnet_file)
-            exit(2)
-        #print(fishnet_file)
-    else:
-        print('Error! Missing required parameter - FISHNET')
-        exit(2)
-        
-    # get the list if lads
-    #lads = os.getenv('LADS')
-    #if lads is not None:
-    #    # split string into list
-    #    lads = lads.split(',')
-
+    fishnet_file = glob.glob(os.path.join(input_path, 'fishnet', '*.*'))[0]
 
     # get the list of files to rasterise
-    files_to_rasterise = os.getenv('FILES')
-
-    if files_to_rasterise is None:
-        print('Error! Missing required parameter - FILES')
-        exit(2)
-    else:
-        # split string into list
-        files_to_rasterise = files_to_rasterise.split(',')
-
-    # loop through files
-    for file in files_to_rasterise:
-        # check files exist
-        print(file)
-        if not os.path.exists(file):
-            print('Could not find file - %s' % file)
-            exit(2)
-
-    run_processing(files=files_to_rasterise, fishnet=fishnet_file, area_codes=lads)
+    vector_file_list = glob.glob(os.path.join(input_path, 'vectorfiles', '*.*'))
+    print(fishnet_file)
+    print(vector_file_list)
+    run_processing(files=vector_file_list, fishnet=fishnet_file, area_codes=lads, output_dir=output_dir)
     return
 
 
