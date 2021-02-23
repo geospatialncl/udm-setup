@@ -123,8 +123,10 @@ def move_output(file_name, output_dir):
     """
 
     # copy output from rasteriser output dir to outputs dir
-    copyfile('/udm-rasteriser/data/%s.tif' % file_name, os.path.join(output_dir, '%s.tif' % 'output_raster'))
-
+    if os.path.exists('/udm-rasteriser/data/%s.tif' % file_name):
+        copyfile('/udm-rasteriser/data/%s.tif' % file_name, os.path.join(output_dir, '%s.tif' % 'output_raster'))
+    else:
+        print('ERROR! Output raster has not been generated or found at the expected location.')
     return
 
 
@@ -278,7 +280,15 @@ def run():
     bbox = None
 
     # get the fishnet file
-    fishnet_file = glob.glob(os.path.join(input_path, 'fishnet', '*.*'))[0]
+    fishnet_file = glob.glob(os.path.join(input_path, 'fishnet', '*.gpkg')) + glob.glob(os.path.join(input_path, 'fishnet', '*.geojson'))
+    if len(fishnet_file) == 0:
+        print('ERROR! No fishnet file found in dir (%).' % os.path.join(input_path, 'fishnet'))
+        exit(2)
+    elif len(fishnet_file) > 1:
+        print('ERROR! More than one fishnet file found (%s). Only one is required.' % fishnet_file)
+        exit(2)
+    else:
+        fishnet_file = fishnet_file[0]
 
     # get the list of files to rasterise
     vector_file_list = glob.glob(os.path.join(input_path, 'vectorfiles', '*.*'))
