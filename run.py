@@ -123,7 +123,7 @@ def move_output(file_name, output_dir):
     """
 
     # copy output from rasteriser output dir to outputs dir
-    copyfile('/udm-rasteriser/data/%s.tif' % file_name, os.path.join(output_dir, '%s.tif' % file_name))
+    copyfile('/udm-rasteriser/data/%s.tif' % file_name, os.path.join(output_dir, '%s.tif' % 'output_raster'))
 
     return
 
