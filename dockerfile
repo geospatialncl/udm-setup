@@ -12,6 +12,5 @@ COPY run.py /
 #COPY env.list /
 RUN mkdir /data
 RUN mkdir /inputs
-RUN mkdir /data/outputs
 
 ENTRYPOINT python run.py

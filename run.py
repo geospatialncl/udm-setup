@@ -270,7 +270,7 @@ def run():
         - e.g. 'E08000021,E08000020'
     """
 
-    input_path = '/data/inputs'
+    input_dir = '/data/inputs'
     output_dir = '/data/outputs'
 
     # declare as None, future updates will use these to check for valid set of inputs
@@ -279,10 +279,17 @@ def run():
     lads = None
     bbox = None
 
+    # check set dirs exist
+    if not os.path.exists(input_dir):
+        print('ERROR! Input directory could not be found!')
+        exit(2)
+    if not os.path.exists(output_dir):
+        os.mkdir(output_dir)
+
     # get the fishnet file
-    fishnet_file = glob.glob(os.path.join(input_path, 'fishnet', '*.gpkg')) + glob.glob(os.path.join(input_path, 'fishnet', '*.geojson'))
+    fishnet_file = glob.glob(os.path.join(input_dir, 'fishnet', '*.gpkg')) + glob.glob(os.path.join(input_dir, 'fishnet', '*.geojson'))
     if len(fishnet_file) == 0:
-        print('ERROR! No fishnet file found in dir (%s).' % os.path.join(input_path, 'fishnet'))
+        print('ERROR! No fishnet file found in dir (%s).' % os.path.join(input_dir, 'fishnet'))
         exit(2)
     elif len(fishnet_file) > 1:
         print('ERROR! More than one fishnet file found (%s). Only one is required.' % fishnet_file)
@@ -291,7 +298,7 @@ def run():
         fishnet_file = fishnet_file[0]
 
     # get the list of files to rasterise
-    vector_file_list = glob.glob(os.path.join(input_path, 'vectorfiles', '*.*'))
+    vector_file_list = glob.glob(os.path.join(input_dir, 'vectorfiles', '*.*'))
     print(fishnet_file)
     print(vector_file_list)
     run_processing(files=vector_file_list, fishnet=fishnet_file, area_codes=lads, output_dir=output_dir)
