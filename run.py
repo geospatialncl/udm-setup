@@ -26,6 +26,12 @@ def get_environment_variables():
     conf['api_url'] = os.getenv('API_URL')
     conf['username'] = os.getenv('USERNAME')
     conf['password'] = os.getenv('PASSWORD')
+
+    if conf['api_url'] is None:
+        # need to load in file
+        print('ERROR! Could not find the required environmental variables')
+        exit(2)
+
     return conf
 
 
@@ -132,12 +138,11 @@ def run_processing(output_dir='/data/outputs', files=[], layers={}, area_codes=[
     - fishnet: file path to fishnet
     - files: a list of files to load in and rasterise
     """
-    # get environmental variables
-    conf = get_environment_variables()
 
     # if no fishnet passed
     # by generating fishnet now it ensures all raster layers generated use the same fishnet
     if fishnet is None:
+
         # temp method until below is sorted
         fishnet_filepath = generate_fishnet(data_dir=output_dir, lads=area_codes)
 
@@ -157,6 +162,7 @@ def run_processing(output_dir='/data/outputs', files=[], layers={}, area_codes=[
 
     # if a list of files is passed, allow these to be rasterised using a fishnet, either passed or generated
     if len(files) != 0:
+
         for file in files:
             print('Rasterising file %s' % file)
             data_gdf = geopandas.read_file(file, encoding='utf-8')
@@ -168,6 +174,11 @@ def run_processing(output_dir='/data/outputs', files=[], layers={}, area_codes=[
             rasterise(data=data_gdf.to_json(), fishnet=fnet.to_json(), output_filename=output_filename)
 
             move_output(output_filename, output_dir)
+
+    # load in env variables if needed
+    if len(layers.keys()) != 0:
+        # get environmental variables
+        conf = get_environment_variables()
 
     # loop through the passed layers, download data and rasterise
     for layer_name in layers.keys():
