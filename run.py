@@ -282,7 +282,7 @@ def run():
     # get the fishnet file
     fishnet_file = glob.glob(os.path.join(input_path, 'fishnet', '*.gpkg')) + glob.glob(os.path.join(input_path, 'fishnet', '*.geojson'))
     if len(fishnet_file) == 0:
-        print('ERROR! No fishnet file found in dir (%).' % os.path.join(input_path, 'fishnet'))
+        print('ERROR! No fishnet file found in dir (%s).' % os.path.join(input_path, 'fishnet'))
         exit(2)
     elif len(fishnet_file) > 1:
         print('ERROR! More than one fishnet file found (%s). Only one is required.' % fishnet_file)
