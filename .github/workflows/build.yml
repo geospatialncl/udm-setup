@@ -13,4 +13,4 @@ jobs:
         run: docker build -t udm-setup .
 
       - name: Run & test
-        run: docker run -v /data:/data --name udm-setup udm-setup
+        run: docker run -v $PWD/data:/data --name udm-setup udm-setup
