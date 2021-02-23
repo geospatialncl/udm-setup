@@ -115,10 +115,10 @@ def move_output(file_name, output_dir):
     """
     Move the file from the rasterise output dir to the model output dir
     """
-    print('Copying file: %s' %file_name)
+
     # copy output from rasteriser output dir to outputs dir
     copyfile('/udm-rasteriser/data/%s.tif' % file_name, os.path.join(output_dir, '%s.tif' % file_name))
-    print(os.listdir(output_dir))
+
     return
 
 

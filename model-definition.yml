@@ -12,7 +12,7 @@ metadata:
     Development model). Data to be rasterized can be supplied as vector files (.geojson, .gpkg) and using the same input
     grid, supplied in a similar vector format (.geojson, .gpkg), will each be output as rasters (as .tif).
 
-    Further updates will add additional features including using data from NISMOD-DB API to generate a fishet to be used
+    Further updates will add additional features including using data from NISMOD-DB API to generate a fishnet to be used
     and also for the input vector data to be rasterized.
   type: data-processing
 
@@ -32,5 +32,8 @@ spec:
       - name: Features
         description: >
           A file containing vector features to rasterize (.geojson, .gpkg)
+        default:
+          - uid: 787e608f-f435-426f-8e2a-054dac8fc10e
+            versionUid: 7f6182ba-60b2-4ef9-bfa0-e6c8eae64aee
         path: inputs/vectorfiles
         required: true
