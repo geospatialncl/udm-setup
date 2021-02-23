@@ -268,7 +268,7 @@ def run():
         - e.g. 'E08000021,E08000020'
     """
 
-    input_path = '/inputs'
+    input_path = '/data/inputs'
     output_dir = '/data/outputs'
 
     # declare as None, future updates will use these to check for valid set of inputs
