@@ -269,9 +269,10 @@ def run():
         - a list of lads to generate the fishnet from
         - e.g. 'E08000021,E08000020'
     """
+    data_path = os.getenv('DATA_PATH', '/data')
 
-    input_dir = '/data/inputs'
-    output_dir = '/data/outputs'
+    input_dir = os.path.join(data_path, 'inputs')
+    output_dir = os.path.join(data_path, 'outputs')
 
     # declare as None, future updates will use these to check for valid set of inputs
     fishnet_file = None
@@ -281,7 +282,9 @@ def run():
 
     # check set dirs exist
     if not os.path.exists(input_dir):
-        print('ERROR! Input directory could not be found!')
+        print(os.listdir('/'))
+        print(os.listdir('/data'))
+        print('ERROR! Input directory could not be found! Details. Searched for %s' % input_dir)
         exit(1)
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
