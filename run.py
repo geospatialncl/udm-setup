@@ -59,7 +59,7 @@ def generate_fishnet(data_dir='/outputs', output_file='fishnet_100m.tif', bbox=[
     return fishnet_geojson
 
 
-def rasterise(data, fishnet=None, area_scale='lad', area_codes=['E08000021'], output_filename='output_raster.tif'):
+def rasterise(data, fishnet=None, area_scale='lad', area_codes=['E08000021'], output_filename='output_raster.tif', fishnet_uid='FID'):
     """
     Rasterise a set of data
     """
@@ -76,7 +76,8 @@ def rasterise(data, fishnet=None, area_scale='lad', area_codes=['E08000021'], ou
             resolution=100.0,  # Fishnet sampling resolution in metres
             area_threshold=50.0,  # Minimum data area within a cell to trigger raster inclusion
             invert=True,  # True if output raster gets a '0' for areas > threshold
-            nodata=1
+            nodata=1,
+            fishnet_uid=fishnet_uid
         ).create()
     else:
         print('rasterising using existing fishnet')
@@ -88,10 +89,30 @@ def rasterise(data, fishnet=None, area_scale='lad', area_codes=['E08000021'], ou
             resolution=100.0,  # Fishnet sampling resolution in metres
             area_threshold=50.0,  # Minimum data area within a cell to trigger raster inclusion
             invert=True,  # True if output raster gets a '0' for areas > threshold
-            nodata=1
+            nodata=1,
+            fishnet_uid=fishnet_uid
         ).create()
 
     return
+
+
+def check_fishnet_valid(gdf, uid):
+    """
+    This checks if there is a 'FID' field in the fishnet. The rasteriser code requires this.
+
+    Returns updated fishnet if a lowercase 'fid' is found.
+
+    Future update should allow user to pass a fid equivalent field name.
+
+    """
+    if 'FID' not in gdf.columns:
+        # check if fid attribute is lower case
+        if 'fid' in gdf.columns:
+            gdf = gdf.rename(columns={'fid': 'FID'})
+        else:
+            print('ERROR! A FID attribute is required within the fishnet dataset.')
+            exit(1)
+    return gdf
 
 
 def process_response(response, layer_name, data_dir):
@@ -130,7 +151,7 @@ def move_output(file_name, output_dir):
     return
 
 
-def run_processing(output_dir='/data/outputs', files=[], layers={}, area_codes=['E00042673',], area_scale='oa', fishnet=None):
+def run_processing(output_dir='/data/outputs', files=[], layers={}, area_codes=['E00042673',], area_scale='oa', fishnet=None, fishnet_uid='FID'):
     """
     Inputs:
     - LAD: a local authority district code
@@ -161,6 +182,9 @@ def run_processing(output_dir='/data/outputs', files=[], layers={}, area_codes=[
     # read in fishnet now so can be used in rasterise process do now so only done once if multiple layers
     # read fishnet in with geopandas (seems more stable than with json or geojson libraries)
     fnet = geopandas.read_file(fishnet_filepath, encoding='utf-8')
+
+    # check the fishnet is valid
+    fnet = check_fishnet_valid(fnet, fishnet_uid)
 
     # if a list of files is passed, allow these to be rasterised using a fishnet, either passed or generated
     if len(files) != 0:
