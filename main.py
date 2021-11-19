@@ -20,11 +20,14 @@ def check_dir_exists(path):
     else:
         files = [f for f in listdir(path) if isfile(join(path, f))]
         for file in files:
-            remove(join(path,file))
+            remove(join(path, file))
     return
 
 
-# chek dir for log file exists
+# check output dir exists
+check_dir_exists(join(data_path, output_dir))
+
+# check dir for log file exists
 check_dir_exists(join(data_path, output_dir, 'log'))
 
 logger = logging.getLogger('transformer')
