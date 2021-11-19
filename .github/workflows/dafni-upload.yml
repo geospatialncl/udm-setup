@@ -13,10 +13,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Docker Build
-        run: docker build -t tool-clip .
+        run: docker build -t udm-setup .
 
       - name: Compress docker image
-        run: docker save tool-clip | gzip > tool-clip.tar.gz
+        run: docker save udm-setup | gzip > udm-setup.tar.gz
 
       - name: Set tag as env
         run: echo "TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
@@ -25,8 +25,8 @@ jobs:
         uses: dafnifacility/dafni-model-uploader@v1.9
         with:
           definition-path: './model-definition.yml'
-          image-path: './tool-clip.tar.gz'
+          image-path: './udm-setup.tar.gz'
           username: ${{ secrets.DAFNI_SERVICE_ACCOUNT_USERNAME }}
           password: ${{ secrets.DAFNI_SERVICE_ACCOUNT_PASSWORD }}
           version-message: ${{ env.TAG }}
-          parent-model: "f72549ff-19e8-4597-a31e-92a9caa0adc0"
+          parent-model: "d15891f4-edce-4d6d-b4e1-56951940a161"
