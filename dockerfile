@@ -1,14 +1,9 @@
 FROM python:3.8
 RUN apt-get -y update
-RUN apt-get -y install libgdal-dev
-COPY requirements.txt /
+RUN apt-get -y install
+RUN pip3 install pandas
 
-RUN pip install -r requirements.txt
-RUN git clone --branch dafni https://github.com/geospatialncl/udm-rasteriser
-#COPY udm-rasteriser /udm-rasteriser
-#RUN pip install -r udm-rasteriser/requirements.txt
+COPY main.py .
+COPY data /data
 
-COPY run.py /
-RUN mkdir /data
-
-ENTRYPOINT python run.py
+ENTRYPOINT python main.py
