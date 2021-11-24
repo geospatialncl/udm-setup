@@ -84,7 +84,8 @@ def generate_attractors(files):
     #files = ['major_roads_gb_clip.asc', 'developmentareas_gb_clip.asc']
     # print(files)
 
-    data = {'name': [], 'reverse_polarity_flag': [], 'weight': []}
+    #data = {'name': [], 'reverse_polarity_flag': [], 'weight': []}
+    data = {'layer_name': [], 'reverse_polarity_flag': [], 'layer_weight': []}
 
     # input_str = 'roads:0.3:1;development:0.5:0;' # should be replaced with user inputs
     # input_str = input_str.split(';')
@@ -113,9 +114,9 @@ def generate_attractors(files):
 
             if layer_name.lower() in file.lower():
                 layer_path = file
-                data['name'].append(layer_path)
+                data['layer_name'].append(layer_path)
                 data['reverse_polarity_flag'].append(layer_polarity)
-                data['weight'].append(layer_weight)
+                data['layer_weight'].append(layer_weight)
 
                 # copy the file into the outputs dir
                 copy_file(layer_path, join(data_path, output_dir,  'data', layer_path.split('/')[-1]))
@@ -139,7 +140,8 @@ def generate_constraints(files):
     # data from the previous steps???
     #files = ['greenbelt_clip.asc', 'sssi_gb_clip.asc', 'currentdevelopment_clip.asc']
 
-    data = {'name': [], 'current_development_flag': [], 'threshold': []}
+    #data = {'name': [], 'current_development_flag': [], 'threshold': []}
+    data = {'layer_name': [], 'current_development_flag': [], 'layer_threshold': []}
 
     # should be replaced with user inputs
     constraints = getenv('constraints')
@@ -172,8 +174,8 @@ def generate_constraints(files):
 
             if layer_name.lower() in file.lower():
                 layer_path = file
-                data['name'].append(layer_path) # this is the path and the name of the file
-                data['threshold'].append(layer_threshold)
+                data['layer_name'].append(layer_path) # this is the path and the name of the file
+                data['layer_threshold'].append(layer_threshold)
                 data['current_development_flag'].append(0)
 
                 # copy the file into the outputs dir
@@ -192,8 +194,8 @@ def generate_constraints(files):
 
         if layer_name.lower() in file.lower():
             layer_path = file
-            data['name'].append(layer_path)
-            data['threshold'].append(layer_threshold)
+            data['layer_name'].append(layer_path)
+            data['layer_threshold'].append(layer_threshold)
             data['current_development_flag'].append(1)
 
             # copy the file into the outputs dir
@@ -217,5 +219,6 @@ generate_attractors(available_files)
 logger.info('Attractors CSV generated')
 
 # move other files # zone id and population
-copy_file(source='/data/inputs/zone_identity_100m.asc', dest='/data/outputs/data/zone_identity_100m.asc')
+#copy_file(source='/data/inputs/zone_identity_100m.asc', dest='/data/outputs/data/zone_identity_100m.asc')
+copy_file(source='/data/inputs/zone_identity.asc', dest='/data/outputs/data/zone_identity.asc')
 copy_file(source='/data/inputs/population.csv', dest='/data/outputs/data/population.csv')
