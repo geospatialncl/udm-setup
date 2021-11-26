@@ -13,4 +13,4 @@ jobs:
         run: docker build -t udm-setup .
 
       - name: Run & test
-        run: docker run -v $PWD/data:/data --name udm-setup udm-setup --env attractors='road:0.3:0;' --env current_development='development:0.3' --env constraints='test:0.3' -t udm-setup
+        run: docker run -v $PWD/data:/data --name udm-setup --env attractors='road:0.3:1;' --env current_development='developed:0.3' --env constraints='developed:0.3' -t udm-setup
