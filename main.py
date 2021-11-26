@@ -119,7 +119,7 @@ def generate_attractors(files):
                 data['layer_weight'].append(layer_weight)
 
                 # copy the file into the outputs dir
-                copy_file(layer_path, join(data_path, output_dir,  'data', layer_path.split('/')[-1]))
+                copy_file(layer_path, join(data_path, output_dir, layer_path.split('/')[-1]))
 
     logger.info('Processed attractors')
 
@@ -179,7 +179,7 @@ def generate_constraints(files):
                 data['current_development_flag'].append(0)
 
                 # copy the file into the outputs dir
-                copy_file(layer_path, join(data_path, output_dir, 'data', layer_path.split('/')[-1]))
+                copy_file(layer_path, join(data_path, output_dir, layer_path.split('/')[-1]))
 
     logger.info('Completed constraints')
 
@@ -199,7 +199,7 @@ def generate_constraints(files):
             data['current_development_flag'].append(1)
 
             # copy the file into the outputs dir
-            copy_file(layer_path, join(data_path, output_dir,  'data',  layer_path.split('/')[-1]))
+            copy_file(layer_path, join(data_path, output_dir,  layer_path.split('/')[-1]))
 
     logger.info('Completed development constraint')
 
@@ -219,6 +219,6 @@ generate_attractors(available_files)
 logger.info('Attractors CSV generated')
 
 # move other files # zone id and population
-copy_file(source='/data/inputs/zone_identity_100m.asc', dest='/data/outputs/data/zone_identity_100m.asc')
+copy_file(source='/data/inputs/zone_identity_100m.asc', dest='/data/outputs/zone_identity_100m.asc')
 #copy_file(source='/data/inputs/zone_identity.asc', dest='/data/outputs/data/zone_identity.asc')
-copy_file(source='/data/inputs/population.csv', dest='/data/outputs/data/population.csv')
+copy_file(source='/data/inputs/population.csv', dest='/data/outputs/population.csv')
