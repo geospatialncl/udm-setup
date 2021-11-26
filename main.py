@@ -219,6 +219,6 @@ generate_attractors(available_files)
 logger.info('Attractors CSV generated')
 
 # move other files # zone id and population
-#copy_file(source='/data/inputs/zone_identity_100m.asc', dest='/data/outputs/data/zone_identity_100m.asc')
-copy_file(source='/data/inputs/zone_identity.asc', dest='/data/outputs/data/zone_identity.asc')
+copy_file(source='/data/inputs/zone_identity_100m.asc', dest='/data/outputs/data/zone_identity_100m.asc')
+#copy_file(source='/data/inputs/zone_identity.asc', dest='/data/outputs/data/zone_identity.asc')
 copy_file(source='/data/inputs/population.csv', dest='/data/outputs/data/population.csv')
