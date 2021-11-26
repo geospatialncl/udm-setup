@@ -27,12 +27,9 @@ def check_dir_exists(path):
 # check output dir exists
 check_dir_exists(join(data_path, output_dir))
 
-# check dir for log file exists
-check_dir_exists(join(data_path, output_dir, 'log'))
-
 logger = logging.getLogger('transformer')
 logger.setLevel(logging.INFO)
-fh = logging.FileHandler(Path(join(data_path, output_dir, 'log')) / 'udm-setup.log')
+fh = logging.FileHandler(Path(join(data_path, output_dir)) / 'udm-setup.log')
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 fh.setFormatter(formatter)
 logger.addHandler(fh)
