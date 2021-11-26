@@ -215,6 +215,13 @@ logger.info('Constraints CSV generated')
 generate_attractors(available_files)
 logger.info('Attractors CSV generated')
 
-# move other files # zone id and population
-copy_file(source='/data/inputs/zone_identity.asc', dest='/data/outputs/zone_identity.asc')
-copy_file(source='/data/inputs/population.csv', dest='/data/outputs/population.csv')
+# move other files # zone identity and population
+for file in available_files:
+    if 'zone_identity' in file.lower():
+        copy_file(source=file, dest=join('/data/outputs/', 'zone_identity.asc'))
+        break
+
+for file in available_files:
+    if 'population' in file.lower():
+        copy_file(source=file, dest=join('/data/outputs/', 'population.csv'))
+        break
