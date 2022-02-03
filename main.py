@@ -4,6 +4,7 @@ from os.path import join, isdir, isfile
 import logging
 from pathlib import Path
 from shutil import copyfile
+import csv
 
 data_path = '/data'
 input_dir = 'input'
@@ -205,6 +206,34 @@ def generate_constraints(files):
     df.to_csv(join(data_path, output_dir, 'constraints.csv'), index=False)
     logger.info('Written constraint csv')
 
+
+def generate_parameters():
+    """
+    Generate the parameters csv file
+    """
+    # get the parameter inputs - need much more checks in here
+    density_from_raster = getenv('density_from_raster')
+    if density_from_raster is None:
+        density_from_raster = 0
+
+    people_per_dwelling = getenv('people_per_dwelling')
+    if people_per_dwelling is None:
+        people_per_dwelling = 2.5
+
+    coverage_threshold = getenv('coverage_threshold')
+    if coverage_threshold is None:
+        coverage_threshold = 50.0
+
+    minimum_plot_size = getenv('minimum_plot_size')
+    if minimum_plot_size is None:
+        minimum_plot_size = 4
+
+    with open(join(data_path, output_dir, 'parameters.csv'), 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        writer.writerow(['density_from_raster', 'people_per_dwelling', 'coverage_threshold', 'minimum_plot_size'])
+        writer.writerow([density_from_raster, people_per_dwelling, coverage_threshold, minimum_plot_size])
+    return
+
 # find any potential input files
 available_files = find_files()
 logger.info('Available files found: %s' %available_files)
@@ -214,6 +243,9 @@ logger.info('Constraints CSV generated')
 
 generate_attractors(available_files)
 logger.info('Attractors CSV generated')
+
+generate_parameters()
+logger.info('Parameters CSV generated')
 
 # move other files # zone identity and population
 for file in available_files:

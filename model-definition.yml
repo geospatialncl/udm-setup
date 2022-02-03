@@ -31,6 +31,34 @@ spec:
         default: 'None'
         required: true
 
+      - name: density_from_raster
+        title: Density from raster
+        type: integer
+        description: Derive density from current development and initial population (set as 0) or provide a density raster (set as 1)
+        default: 0
+        required: true
+
+      - name: people_per_dwelling
+        title: People per dwelling
+        type: numeric
+        description: Conversion factor from people per cell to dwellings per cell
+        default: 2.5
+        required: true
+
+      - name: coverage_threshold
+        title: Coverage threshold
+        type: numeric
+        description: The threshold for percentage coverage for the combined constraint layers. All above threshold cannot be developed
+        default: 50.0
+        required: true
+
+      - name: minimum_plot_size
+        title: Minimum plot size
+        type: numeric
+        description: Minimum number of raster cells within a zone required for a development area
+        default: 4
+        required: true
+
   outputs:
     datasets:
       - name: outputs/*
