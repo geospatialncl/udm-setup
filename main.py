@@ -211,10 +211,27 @@ def generate_parameters():
     """
     Generate the parameters csv file
     """
-    with open('/data/outputs/parameters.csv', 'w', newline='') as csvfile:
+    # get the parameter inputs - need much more checks in here
+    density_from_raster = getenv('density_from_raster')
+    if density_from_raster is None:
+        density_from_raster = 0
+
+    people_per_dwelling = getenv('people_per_dwelling')
+    if people_per_dwelling is None:
+        people_per_dwelling = 2.5
+
+    coverage_threshold = getenv('coverage_threshold')
+    if coverage_threshold is None:
+        coverage_threshold = 50.0
+
+    minimum_plot_size = getenv('minimum_plot_size')
+    if minimum_plot_size is None:
+        minimum_plot_size = 4
+
+    with open(join(data_path, output_dir, 'parameters.csv'), 'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
         writer.writerow(['density_from_raster', 'people_per_dwelling', 'coverage_threshold', 'minimum_plot_size'])
-        writer.writerow([0, 2.5, 50.0, 4])
+        writer.writerow([density_from_raster, people_per_dwelling, coverage_threshold, minimum_plot_size])
     return
 
 # find any potential input files
