@@ -40,21 +40,21 @@ spec:
 
       - name: people_per_dwelling
         title: People per dwelling
-        type: numeric
+        type: number
         description: Conversion factor from people per cell to dwellings per cell
         default: 2.5
         required: true
 
       - name: coverage_threshold
         title: Coverage threshold
-        type: numeric
+        type: number
         description: The threshold for percentage coverage for the combined constraint layers. All above threshold cannot be developed
         default: 50.0
         required: true
 
       - name: minimum_plot_size
         title: Minimum plot size
-        type: numeric
+        type: number
         description: Minimum number of raster cells within a zone required for a development area
         default: 4
         required: true
