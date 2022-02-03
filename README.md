@@ -42,17 +42,19 @@ Data files should for the attractors and constraints should be placed in the '/d
 All parameters should be passed as environmental variables (--env) to te docker container.
 
 #### attractors
-A semi-colan seperated list of attractor layers including a polarity value and a weight value.
-* name: 'attractors'
+A semi-colan seperated list of attractor layers (or string similar in some part) including a polarity value and a weight value.
+* name: attractors
 * e.g: 'road:0.3:1;'
 
 #### constraints
-A semi-colan seperated list of constraint layers 
-name: constraints
+A semi-colan seperated list of constraint layers (or string similar in some part) including a threshold value for the layer at which point the cell is classed occupied/full and not suitable for development. All layers cell values should relate to a 'coverage' value, sucha s genereted by the udm-rasterise-coverage tool/model.
+* name: constraints
+* e.g.: 'developed:0.3;'
 
 #### current development
-A colan seperated list of a file name and a threshold value for % coverage denoting the pint it's considered already occupied/developed.
-name: current_development
+A colan seperated list of a file name (or string similar in some part) and a threshold value for % coverage denoting the pint it's considered already occupied/developed.
+* name: current_development
+* e.g.: 'developed:0.3;'
 
 #### density from raster
 Parameter (integer) to identify is new development density is taken from the input data (0) or from an input density raster
