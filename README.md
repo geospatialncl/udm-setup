@@ -58,17 +58,16 @@ A colan seperated list of a file name (or string similar in some part) and a thr
 
 #### density from raster
 Parameter (integer) to identify is new development density is taken from the input data (0) or from an input density raster
-name: density_from_raster
+* name: density_from_raster
 
 #### people per dwelling
 Float value for converting between people per cell and people per dwelling
-name: people_per_dwelling
+* name: people_per_dwelling
 
 #### coverage threshold
 Float value for the threshold value at which a cell is considered occupied/full and can't be developed when all constraints have been merged
-name: coverage_threshold
+* name: coverage_threshold
 
 #### minimum plot size
 Integer value for the number of cells which must be clustered together to consider for development
-name: minimum_plot_size
-
+* name: minimum_plot_size
