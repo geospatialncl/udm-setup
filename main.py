@@ -5,6 +5,8 @@ import logging
 from datetime import datetime
 from pathlib import Path
 from shutil import copyfile
+import rasterio
+from geojson import Polygon
 import csv
 
 data_path = '/data'
@@ -13,12 +15,10 @@ output_dir = 'outputs'
 outputs_data_dir = 'data'
 
 
-def metadata_json(output_path, output_title, output_description):
+def metadata_json(output_path, output_title, output_description, bbox):
     """
     Generate a metadata json file used to catalogue the outputs of the UDM model on DAFNI
     """
-    # set these fields to output on DAFNI is usable
-    description = ''
 
     # Create metadata file
     metadata = f"""{{
@@ -52,7 +52,8 @@ def metadata_json(output_path, output_title, output_description):
       "dct:spatial": {{
         "@type": "dct:Location",
         "rdfs:label": null
-      }}
+      }},
+      "geojson": {bbox}
     }}
     """
 
@@ -308,8 +309,13 @@ for file in available_files:
         copy_file(source=file, dest=join('/data/outputs/', 'population.csv'))
         break
 
+
+dataset = rasterio.open(join('/data/outputs/', 'zone_identity.asc'))
+bbox = dataset.bounds
+geojson = Polygon([[(bbox.left,bbox.top), (bbox.right, bbox.top), (bbox.right,bbox.bottom), (bbox.left, bbox.bottom)]])
+
 title_for_output = getenv('OUTPUT_TITLE')
 description_for_output = getenv('OUTPUT_DESCRIPTION')
 
 # write a metadata file so outputs properly recorded on DAFNI
-metadata_json(output_path=join(data_path, output_dir), output_title=title_for_output, output_description=description_for_output)
+metadata_json(output_path=join(data_path, output_dir), output_title=title_for_output, output_description=description_for_output, bbox=geojson)
