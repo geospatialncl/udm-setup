@@ -2,6 +2,7 @@ import pandas as pd
 from os import getenv, walk, mkdir, remove, listdir
 from os.path import join, isdir, isfile
 import logging
+from datetime import datetime
 from pathlib import Path
 from shutil import copyfile
 import csv
@@ -10,6 +11,55 @@ data_path = '/data'
 input_dir = 'input'
 output_dir = 'outputs'
 outputs_data_dir = 'data'
+
+
+def metadata_json(output_path, output_title, output_description):
+    """
+    Generate a metadata json file used to catalogue the outputs of the UDM model on DAFNI
+    """
+    # set these fields to output on DAFNI is usable
+    description = ''
+
+    # Create metadata file
+    metadata = f"""{{
+      "@context": ["metadata-v1"],
+      "@type": "dcat:Dataset",
+      "dct:language": "en",
+      "dct:title": "{output_title}",
+      "dct:description": "{output_description}",
+      "dcat:keyword": [
+        "UDM"
+      ],
+      "dct:subject": "Environment",
+      "dct:license": {{
+        "@type": "LicenseDocument",
+        "@id": "https://creativecommons.org/licences/by/4.0/",
+        "rdfs:label": null
+      }},
+      "dct:creator": [{{"@type": "foaf:Organization"}}],
+      "dcat:contactPoint": {{
+        "@type": "vcard:Organization",
+        "vcard:fn": "DAFNI",
+        "vcard:hasEmail": "support@dafni.ac.uk"
+      }},
+      "dct:created": "{datetime.now().isoformat()}Z",
+      "dct:PeriodOfTime": {{
+        "type": "dct:PeriodOfTime",
+        "time:hasBeginning": null,
+        "time:hasEnd": null
+      }},
+      "dafni_version_note": "created",
+      "dct:spatial": {{
+        "@type": "dct:Location",
+        "rdfs:label": null
+      }}
+    }}
+    """
+
+    # write to file
+    with open(join(output_path, 'metadata.json'), 'w') as f:
+        f.write(metadata)
+    return
 
 
 def check_dir_exists(path):
@@ -23,22 +73,6 @@ def check_dir_exists(path):
         for file in files:
             remove(join(path, file))
     return
-
-
-# check output dir exists
-check_dir_exists(join(data_path, output_dir))
-
-logger = logging.getLogger('udm-setup')
-logger.setLevel(logging.INFO)
-fh = logging.FileHandler(Path(join(data_path, output_dir)) / 'udm-setup.log')
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-fh.setFormatter(formatter)
-logger.addHandler(fh)
-
-logger.info('Log file established!')
-
-# check output dir exists
-check_dir_exists(join(data_path, output_dir, outputs_data_dir))
 
 
 def find_files():
@@ -234,6 +268,22 @@ def generate_parameters():
         writer.writerow([density_from_raster, people_per_dwelling, coverage_threshold, minimum_plot_size])
     return
 
+
+# check output dir exists
+check_dir_exists(join(data_path, output_dir))
+
+logger = logging.getLogger('udm-setup')
+logger.setLevel(logging.INFO)
+fh = logging.FileHandler(Path(join(data_path, output_dir)) / 'udm-setup.log')
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+logger.addHandler(fh)
+
+logger.info('Log file established!')
+
+# check output dir exists
+check_dir_exists(join(data_path, output_dir, outputs_data_dir))
+
 # find any potential input files
 available_files = find_files()
 logger.info('Available files found: %s' %available_files)
@@ -257,3 +307,9 @@ for file in available_files:
     if 'population' in file.lower():
         copy_file(source=file, dest=join('/data/outputs/', 'population.csv'))
         break
+
+title_for_output = getenv('OUTPUT_TITLE')
+description_for_output = getenv('OUTPUT_DESCRIPTION')
+
+# write a metadata file so outputs properly recorded on DAFNI
+metadata_json(output_path=join(data_path, output_dir), output_title=title_for_output, output_description=description_for_output)

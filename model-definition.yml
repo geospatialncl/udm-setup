@@ -59,6 +59,20 @@ spec:
         default: 4
         required: true
 
+      - name: OUTPUT_TITLE
+        title: Title for output
+        type: string
+        description: The title of the dataset when saved to DAFNI from UDM
+        default: 'UDM output'
+        required: true
+
+      - name: OUTPUT_DESCRIPTION
+        title: Description for output
+        type: string
+        description: Description for the output datset from UDM when saved on to DAFNI
+        default: 'Results from a UDM model run'
+        required: true
+
   outputs:
     datasets:
       - name: outputs/*
