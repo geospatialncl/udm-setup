@@ -59,7 +59,7 @@ def metadata_json(output_path, output_title, output_description, bbox):
     """
 
     # write to file
-    with open(join(output_path, 'metadata.json'), 'w') as f:
+    with open(join(output_path, 'metadata_udm.json'), 'w') as f:
         f.write(metadata)
     return
 
