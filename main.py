@@ -13,6 +13,7 @@ data_path = '/data'
 input_dir = 'input'
 output_dir = 'outputs'
 outputs_data_dir = 'data'
+outputs_meta_dir = 'metadata'
 
 
 def metadata_json(output_path, output_title, output_description, bbox):
@@ -284,6 +285,7 @@ logger.info('Log file established!')
 
 # check output dir exists
 check_dir_exists(join(data_path, output_dir, outputs_data_dir))
+check_dir_exists(join(data_path, output_dir, outputs_meta_dir))
 
 # find any potential input files
 available_files = find_files()
@@ -318,4 +320,4 @@ title_for_output = getenv('OUTPUT_TITLE')
 description_for_output = getenv('OUTPUT_DESCRIPTION')
 
 # write a metadata file so outputs properly recorded on DAFNI
-metadata_json(output_path=join(data_path, output_dir), output_title=title_for_output, output_description=description_for_output, bbox=geojson)
+metadata_json(output_path=join(data_path, output_dir, outputs_meta_dir), output_title=title_for_output, output_description=description_for_output, bbox=geojson)
