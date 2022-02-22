@@ -16,7 +16,7 @@ outputs_data_dir = 'data'
 outputs_meta_dir = 'metadata'
 
 
-def metadata_json(output_path, output_title, output_description, bbox):
+def metadata_json(output_path, output_title, output_description, bbox, file_name):
     """
     Generate a metadata json file used to catalogue the outputs of the UDM model on DAFNI
     """
@@ -59,7 +59,7 @@ def metadata_json(output_path, output_title, output_description, bbox):
     """
 
     # write to file
-    with open(join(output_path, 'metadata_udm.json'), 'w') as f:
+    with open(join(output_path, '%s.json' % file_name), 'w') as f:
         f.write(metadata)
     return
 
@@ -320,4 +320,7 @@ title_for_output = getenv('OUTPUT_TITLE')
 description_for_output = getenv('OUTPUT_DESCRIPTION')
 
 # write a metadata file so outputs properly recorded on DAFNI
-metadata_json(output_path=join(data_path, output_dir, outputs_meta_dir), output_title=title_for_output, output_description=description_for_output, bbox=geojson)
+metadata_json(output_path=join(data_path, output_dir, outputs_meta_dir), output_title=title_for_output, output_description=description_for_output, bbox=geojson, file_name='metadata_udm')
+
+# write a metadata file so inputs properly recorded on DAFNI - for ease of use adds onto info provided for outputs
+metadata_json(output_path=join(data_path, output_dir, outputs_meta_dir), output_title=title_for_output+'-inputs', output_description='All inputs' + description_for_output, bbox=geojson, file_name='metadata_udm_inputs')
