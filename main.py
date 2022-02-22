@@ -324,3 +324,6 @@ metadata_json(output_path=join(data_path, output_dir, outputs_meta_dir), output_
 
 # write a metadata file so inputs properly recorded on DAFNI - for ease of use adds onto info provided for outputs
 metadata_json(output_path=join(data_path, output_dir, outputs_meta_dir), output_title=title_for_output+'-inputs', output_description='All inputs' + description_for_output, bbox=geojson, file_name='metadata_udm_inputs')
+
+# write a metadata file so outputs properly recorded on DAFNI - for UDM AND CityCat outputs
+metadata_json(output_path=join(data_path, output_dir, outputs_meta_dir), output_title=title_for_output+'-UDM and flood impacts', output_description='Outputs from UDM and flood impacts (with default flood settings)' + description_for_output, bbox=geojson, file_name='metadata_udm_flood_outputs')
