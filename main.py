@@ -94,7 +94,7 @@ def find_files():
             extension = file.split('.')[-1]
             if extension in suitable_extension_types:
                 # file is good and what we are looking for
-                input_files.append(join(root, file.split('.')[0]))
+                input_files.append(join(root, file))
 
     print(input_files)
     return input_files
@@ -145,8 +145,8 @@ def generate_attractors(files):
 
         # search list of files of file with layer name in
         for file in files:
-
-            if layer_name.lower() == file.lower():
+            file_name = file.split('.')[0]
+            if layer_name.lower() == file_name.lower():
                 layer_path = file
                 data['layer_name'].append(layer_path.split('/')[-1])
                 data['reverse_polarity_flag'].append(layer_polarity)
@@ -205,8 +205,8 @@ def generate_constraints(files):
 
         # search list of files of file with layer name in
         for file in files:
-
-            if layer_name.lower() == file.lower():
+            file_name = file.split('.')[0]
+            if layer_name.lower() == file_name.lower():
                 layer_path = file
                 data['layer_name'].append(layer_path.split('/')[-1]) # this is the path and the name of the file
                 data['layer_threshold'].append(layer_threshold)
@@ -225,8 +225,8 @@ def generate_constraints(files):
 
     # search list of files of file with layer name in
     for file in files:
-
-        if layer_name.lower() == file.lower():
+        file_name = file.split('.')[0]
+        if layer_name.lower() == file_name.lower():
             layer_path = file
             data['layer_name'].append(layer_path.split('/')[-1])
             data['layer_threshold'].append(layer_threshold)
