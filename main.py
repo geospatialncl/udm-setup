@@ -146,7 +146,7 @@ def generate_attractors(files):
         # search list of files of file with layer name in
         for file in files:
 
-            if layer_name.lower() in file.lower():
+            if layer_name.lower() == file.lower():
                 layer_path = file
                 data['layer_name'].append(layer_path.split('/')[-1])
                 data['reverse_polarity_flag'].append(layer_polarity)
@@ -206,7 +206,7 @@ def generate_constraints(files):
         # search list of files of file with layer name in
         for file in files:
 
-            if layer_name.lower() in file.lower():
+            if layer_name.lower() == file.lower():
                 layer_path = file
                 data['layer_name'].append(layer_path.split('/')[-1]) # this is the path and the name of the file
                 data['layer_threshold'].append(layer_threshold)
