@@ -94,7 +94,7 @@ def find_files():
             extension = file.split('.')[-1]
             if extension in suitable_extension_types:
                 # file is good and what we are looking for
-                input_files.append(join(root, file))
+                input_files.append(join(root, file.split('.')[0]))
 
     print(input_files)
     return input_files
@@ -226,7 +226,7 @@ def generate_constraints(files):
     # search list of files of file with layer name in
     for file in files:
 
-        if layer_name.lower() in file.lower():
+        if layer_name.lower() == file.lower():
             layer_path = file
             data['layer_name'].append(layer_path.split('/')[-1])
             data['layer_threshold'].append(layer_threshold)
