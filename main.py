@@ -146,7 +146,10 @@ def generate_attractors(files):
         # search list of files of file with layer name in
         for file in files:
             file_name = file.split('.')[0]
-            if layer_name.lower() == file_name.lower():
+            if '_clip' in file_name.lower():
+                file_name = file_name.replace('_clip', '')
+                 
+            if layer_name.lower() == file_name.lower() or :
                 layer_path = file
                 data['layer_name'].append(layer_path.split('/')[-1])
                 data['reverse_polarity_flag'].append(layer_polarity)
