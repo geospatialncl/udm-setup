@@ -111,6 +111,7 @@ def generate_attractors(files):
     """
     Generate the input csv file for the attractors required by UDM
     """
+    logger.info('Running generate attractors method')
     # for each attractor as a row in the csv file
     ## name = attactors.csv
     ## format
@@ -131,6 +132,7 @@ def generate_attractors(files):
         attractors = attractors.split(';')
     print(attractors)
     logger.info('Attractors input: %s' %attractors)
+    logger.info('Number of attractors: %s' %len(attractors))
 
     # loop through the passed attractors
     for layer in attractors:
@@ -149,6 +151,8 @@ def generate_attractors(files):
         for file in files:
             logger.info('Checking file: %s' %file)
             file_name = file.split('.')[0]
+            file_name = file_name.split('/')[-1]
+            
             if '_clip' in file_name.lower():
                 file_name = file_name.replace('_clip', '')
             logger.info('File name: %s' %file_name)
@@ -173,6 +177,7 @@ def generate_attractors(files):
 def generate_constraints(files):
     """
     """
+    logger.info('Running generate constraints method')
     # for each constraint as row in the table
     ## name = constraints.csv
     ## format
@@ -192,6 +197,7 @@ def generate_constraints(files):
         constraints = constraints.split(';')
     print(constraints)
     logger.info('Constraints input: %s' %constraints)
+    logger.info('Number of constraints: %s' %constraints)
 
     constraint_currentdevelopment = getenv('current_development')
 
@@ -203,7 +209,9 @@ def generate_constraints(files):
 
     # loop through the constraint layers
     for layer in constraints:
+        logger.info('Contraint layer: %s' %layer)
         print('layer=',layer)
+        
         if len(layer) == 0 or layer is None: break
         layer = layer.split(':')
 
@@ -213,6 +221,10 @@ def generate_constraints(files):
         # search list of files of file with layer name in
         for file in files:
             file_name = file.split('.')[0]
+            file_name = file_name.split('/')[-1]
+            
+            logger.info('File name: %s' %file_name)
+            
             if layer_name.lower() == file_name.lower():
                 layer_path = file
                 data['layer_name'].append(layer_path.split('/')[-1]) # this is the path and the name of the file
