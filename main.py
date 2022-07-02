@@ -134,6 +134,7 @@ def generate_attractors(files):
 
     # loop through the passed attractors
     for layer in attractors:
+        logger.info('Layer: %s' %layer)
         if len(layer) == 0 or layer is None: break
         layer = layer.split(':')
 
@@ -142,14 +143,17 @@ def generate_attractors(files):
         layer_weight = layer[1]
         layer_polarity = layer[2]
         # print(layer_name)
+        logger.info('Layer name: %s' %layer_name)
 
         # search list of files of file with layer name in
         for file in files:
+            logger.info('Checking file: %s' %file)
             file_name = file.split('.')[0]
             if '_clip' in file_name.lower():
                 file_name = file_name.replace('_clip', '')
-                 
+            logger.info('File name: %s' %file_name)
             if layer_name.lower() == file_name.lower():
+                logger.info('Macthed layer and file')
                 layer_path = file
                 data['layer_name'].append(layer_path.split('/')[-1])
                 data['reverse_polarity_flag'].append(layer_polarity)
