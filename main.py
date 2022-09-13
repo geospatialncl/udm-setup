@@ -206,10 +206,10 @@ def generate_constraints(files):
     print('current-development', constraint_currentdevelopment)
 
     # input_str = 'greenbelt:0:25;sssi:0:30;development:1:50' # example input expected
-
+    
     # loop through the constraint layers
     for layer in constraints:
-        logger.info('Contraint layer: %s' %layer)
+        logger.info('Contraint layer to match: %s' %layer)
         print('layer=',layer)
         
         if len(layer) == 0 or layer is None: break
@@ -234,7 +234,7 @@ def generate_constraints(files):
                 # copy the file into the outputs dir
                 copy_file(layer_path, join(data_path, output_dir, layer_path.split('/')[-1]))
                 logger.info('Copied matching file!')
-
+        logger.info('-----')
     logger.info('Completed constraints')
 
     # add current dev layer to dataframe
@@ -248,6 +248,7 @@ def generate_constraints(files):
     # search list of files of file with layer name in
     for file in files:
         file_name = file.split('.')[0]
+        file_name = file_name.split('/')[-1]
         logger.info('Checking file: %s' %file_name)
                     
         if layer_name.lower() == file_name.lower():
@@ -261,7 +262,7 @@ def generate_constraints(files):
             logger.info('Copied matching file!')
 
     logger.info('Completed development constraint')
-
+    
     df = pd.DataFrame(data)
     print(df.head())
     df.to_csv(join(data_path, output_dir, 'constraints.csv'), index=False)
@@ -318,12 +319,15 @@ logger.info('Available files found: %s' %available_files)
 
 generate_constraints(available_files)
 logger.info('Constraints CSV generated')
+logger.info('----------------------------------')
 
 generate_attractors(available_files)
 logger.info('Attractors CSV generated')
+logger.info('----------------------------------')
 
 generate_parameters()
 logger.info('Parameters CSV generated')
+logger.info('----------------------------------')
 
 # move other files # zone identity and population
 for file in available_files:
