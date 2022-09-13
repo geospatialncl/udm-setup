@@ -223,7 +223,7 @@ def generate_constraints(files):
             file_name = file.split('.')[0]
             file_name = file_name.split('/')[-1]
             
-            logger.info('File name: %s' %file_name)
+            logger.info('Checking file: %s' %file_name)
             
             if layer_name.lower() == file_name.lower():
                 layer_path = file
@@ -233,18 +233,23 @@ def generate_constraints(files):
 
                 # copy the file into the outputs dir
                 copy_file(layer_path, join(data_path, output_dir, layer_path.split('/')[-1]))
+                logger.info('Copied matching file!')
 
     logger.info('Completed constraints')
 
     # add current dev layer to dataframe
     layer = constraint_currentdevelopment.split(':')
-
+    logger.info('Sorting current development layer constraint')
+    
     layer_name = layer[0]
     layer_threshold = layer[1]
+    logger.info('Current development layer: %s' %layer_name)
 
     # search list of files of file with layer name in
     for file in files:
         file_name = file.split('.')[0]
+        logger.info('Checking file: %s' %file_name)
+                    
         if layer_name.lower() == file_name.lower():
             layer_path = file
             data['layer_name'].append(layer_path.split('/')[-1])
@@ -253,6 +258,7 @@ def generate_constraints(files):
 
             # copy the file into the outputs dir
             copy_file(layer_path, join(data_path, output_dir,  layer_path.split('/')[-1]))
+            logger.info('Copied matching file!')
 
     logger.info('Completed development constraint')
 
