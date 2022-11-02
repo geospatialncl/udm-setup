@@ -77,6 +77,32 @@ def check_dir_exists(path):
     return
 
 
+def find_metadata_files():
+    """
+    Search all directories for any metadata files (metadat.csv)
+    """
+
+    suitable_extension_types = ['csv','']
+
+    files_ = []
+
+    for root, dirs, files in walk('/data/inputs'):
+        print(root, files)
+        for file in files:
+
+            # check if extension acceptable
+            extension = file.split('.')[-1]
+            print('checking extension of:', file)
+            if extension in suitable_extension_types:
+                # check if metadata text in file name
+                if 'metadata' in file:
+                    # file is good and what we are looking for
+                    files_.append(join(root, file))
+
+    print(files_)
+    return files_
+
+
 def find_files():
     """
     Search all directories for any input files
@@ -313,6 +339,11 @@ logger.info('Log file established!')
 check_dir_exists(join(data_path, output_dir, outputs_data_dir))
 check_dir_exists(join(data_path, output_dir, outputs_meta_dir))
 
+# check for any meta data files
+metadata_files = find_metadata_files() #search for any existing metadata files (expect to find at least one from the population data)
+print('Metadata files', metadata_files)
+logger.info('Metadata files found: %s' %metadata_files)
+
 # find any potential input files
 available_files = find_files()
 logger.info('Available files found: %s' %available_files)
@@ -356,3 +387,17 @@ metadata_json(output_path=join(data_path, output_dir, outputs_meta_dir), output_
 
 # write a metadata file so outputs properly recorded on DAFNI - for UDM AND CityCat outputs
 metadata_json(output_path=join(data_path, output_dir, outputs_meta_dir), output_title=title_for_output+'-UDM and flood impacts', output_description='Outputs from UDM and flood impacts (with default flood settings)' + description_for_output, bbox=geojson, file_name='metadata_udm_flood_outputs')
+
+# write a metadata file recording key parameters
+print('Saving metadata file')
+logger.info('Saving metadata file')
+if len(metadata_files) == 1:
+    df = pd.read_csv(metadata_files[0])
+    print(df.head())
+    df.to_csv(join(data_path, output_dir, 'metadata.csv'))
+else:
+    print('Multiple metadata files found. This functionality has not been addded yet')
+    logger.info('Multiple metadata files found. This is not supported yet')
+
+print('completed')
+
