@@ -398,7 +398,7 @@ logger.info('Saving metadata file')
 if len(metadata_files) == 1:
     df = pd.read_csv(metadata_files[0])
     print(df.head())
-    df.to_csv(join(data_path, output_dir, 'metadata.csv'))
+    df.to_csv(join(data_path, output_dir, 'metadata.csv'), index=False)
 else:
     print('Multiple metadata files found. This functionality has not been addded yet')
     logger.info('Multiple metadata files found. This is not supported yet')
