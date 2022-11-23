@@ -178,9 +178,11 @@ def generate_attractors(files):
             logger.info('Checking file: %s' %file)
 
             if '_clip' in file.lower():
-                file = file.replace('_clip.', '.')
+                file_name = file.replace('_clip.', '.')
+                file_name = file_name.split('.')[0]
+            else:
+                file_name = file.split('.')[0]
 
-            file_name = file.split('.')[0]
             file_name = file_name.split('/')[-1]
 
             logger.info('File name: %s' %file_name)
