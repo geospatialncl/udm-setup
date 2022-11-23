@@ -176,14 +176,16 @@ def generate_attractors(files):
         # search list of files of file with layer name in
         for file in files:
             logger.info('Checking file: %s' %file)
+
+            if '_clip' in file.lower():
+                file = file.replace('_clip.', '.')
+
             file_name = file.split('.')[0]
             file_name = file_name.split('/')[-1]
-            
-            if '_clip' in file_name.lower():
-                file_name = file_name.replace('_clip', '')
+
             logger.info('File name: %s' %file_name)
             if layer_name.lower() == file_name.lower():
-                logger.info('Macthed layer and file')
+                logger.info('Matched layer and file')
                 layer_path = file
                 data['layer_name'].append(layer_path.split('/')[-1])
                 data['reverse_polarity_flag'].append(layer_polarity)
@@ -235,7 +237,7 @@ def generate_constraints(files):
     
     # loop through the constraint layers
     for layer in constraints:
-        logger.info('Contraint layer to match: %s' %layer)
+        logger.info('Constraint layer to match: %s' %layer)
         print('layer=',layer)
         
         if len(layer) == 0 or layer is None: break
