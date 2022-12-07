@@ -299,6 +299,31 @@ def generate_constraints(files):
     logger.info('Written constraint csv')
 
 
+def check_for_extra_parameters():
+    """
+    Check for any extra parameters passed by the user and needs to be recorded in the metadata file
+
+    Returns a list with dictionary elements per parameter.
+    """
+
+    extra_parameter_list = []
+    # get the parameter value
+    extra_parameters = getenv('extra_parameters')
+
+    # parse
+    if extra_parameters is None or extra_parameters == "":
+        # if nothing passed, return an empty list
+        return extra_parameter_list
+    else:
+        # split the string on ; if multiple are passed
+        extra_parameters = extra_parameters.split(';')
+        for parameter in extra_parameters:
+            name, value = parameter.split(':')
+            extra_parameter_list.append({'name':name, 'value': value})
+
+        return extra_parameter_list
+
+
 def generate_parameters():
     """
     Generate the parameters csv file
@@ -342,6 +367,8 @@ logger.info('Log file established!')
 # check output dir exists
 check_dir_exists(join(data_path, output_dir, outputs_data_dir))
 check_dir_exists(join(data_path, output_dir, outputs_meta_dir))
+
+# check for additional parameters to record in metedata file
 
 # check for any meta data files
 metadata_files = find_metadata_files() #search for any existing metadata files (expect to find at least one from the population data)
@@ -398,7 +425,15 @@ logger.info('Saving metadata file')
 if len(metadata_files) == 1:
     df = pd.read_csv(metadata_files[0])
     print(df.head())
+    # check for extra parameters
+    extra_parameters = check_for_extra_parameters()
+
+    # loop through any extra parameters and append to the metedata csv
+    for parameter in extra_parameters:
+        df = df.append(parameter, ignore_index=True)
+
     df.to_csv(join(data_path, output_dir, 'metadata.csv'), index=False)
+
 else:
     print('Multiple metadata files found. This functionality has not been addded yet')
     logger.info('Multiple metadata files found. This is not supported yet')
