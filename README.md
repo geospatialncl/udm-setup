@@ -71,3 +71,7 @@ Float value for the threshold value at which a cell is considered occupied/full 
 #### minimum plot size
 Integer value for the number of cells which must be clustered together to consider for development
 * name: minimum_plot_size
+
+#### record extra parameters
+Allow alternative parameters to be noted, such as those based on the inclusion of weightings of layers.
+* name: extra_parameters
