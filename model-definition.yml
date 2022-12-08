@@ -59,6 +59,13 @@ spec:
         default: 4
         required: true
 
+      - name: extra_parameters
+        title: Extra parameters or used options to record
+        type: string
+        description: Option to record any extra parameters to be associated with the UDM run. These aren't used by the UDM model but are recorded in the metadata. Entries should take the form "PARAMETER NAME:PARAMETER VALUE;PARAMETER NAME:PARAMETER VALUE"
+        default: ""
+        required: false
+
       - name: OUTPUT_TITLE
         title: Title for output
         type: string

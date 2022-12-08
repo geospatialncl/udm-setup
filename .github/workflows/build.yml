@@ -13,4 +13,10 @@ jobs:
         run: docker build -t udm-setup .
 
       - name: Run & test
-        run: docker run -v $PWD/data:/data --name udm-setup --env attractors='roads_proximity_100m:0.3:1;' --env current_development='developed:0.3' --env constraints='developed:0.3' --env density_from_raster=0 --env people_per_dwelling=2.5 --env coverage_threshold=55.0 --env minimum_plot_size=5 --env OUTPUT_TITLE='UDM result' --env OUTPUT_DESCRIPTION='UDM result set' -t udm-setup
+        run: docker run -v $PWD/data:/data --name udm-setup-1 --env attractors='roads_proximity_100m:0.3:1;' --env current_development='developed:0.3' --env constraints='developed:0.3' --env density_from_raster=0 --env people_per_dwelling=2.5 --env coverage_threshold=55.0 --env minimum_plot_size=5 --env OUTPUT_TITLE='UDM result' --env OUTPUT_DESCRIPTION='UDM result set' -t udm-setup
+
+      - name: Run & test with single extra parameter
+        run: docker run -v $PWD/data:/data --name udm-setup-2 --env attractors='roads_proximity_100m:0.3:1;' --env current_development='developed:0.3' --env constraints='developed:0.3' --env density_from_raster=0 --env people_per_dwelling=2.5 --env coverage_threshold=55.0 --env minimum_plot_size=5 --env OUTPUT_TITLE='UDM result' --env OUTPUT_DESCRIPTION='UDM result set'  --env extra_parameters="FLOODZONE:FALSE;" -t udm-setup
+
+      - name: Run & test with multiple extra parameters
+        run: docker run -v $PWD/data:/data --name udm-setup-3 --env attractors='roads_proximity_100m:0.3:1;' --env current_development='developed:0.3' --env constraints='developed:0.3' --env density_from_raster=0 --env people_per_dwelling=2.5 --env coverage_threshold=55.0 --env minimum_plot_size=5 --env OUTPUT_TITLE='UDM result' --env OUTPUT_DESCRIPTION='UDM result set'  --env extra_parameters="FLOODZONE:FALSE;SLOPE:TRUE" -t udm-setup
