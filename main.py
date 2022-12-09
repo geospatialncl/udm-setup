@@ -125,6 +125,25 @@ def find_files():
     print(input_files)
     return input_files
 
+def clean_file_name(file):
+    """
+    Clean a file name ready for matching to passed layer names.
+
+    Remove _clip from any file name where it's found
+
+    Returns a single string as file name
+    """
+
+    if '_clip' in file.lower():
+        file_name = file.replace('_clip.', '.')
+        file_name = file_name.split('.')[0]
+    else:
+        file_name = file.split('.')[0]
+
+    file_name = file_name.split('/')[-1]
+
+    return file_name
+
 
 def copy_file(source, dest):
     print('COPYING FILE: %s' % source)
@@ -177,13 +196,8 @@ def generate_attractors(files):
         for file in files:
             logger.info('Checking file: %s' %file)
 
-            if '_clip' in file.lower():
-                file_name = file.replace('_clip.', '.')
-                file_name = file_name.split('.')[0]
-            else:
-                file_name = file.split('.')[0]
-
-            file_name = file_name.split('/')[-1]
+            # clean the file name
+            file_name = clean_file_name(file)
 
             logger.info('File name: %s' %file_name)
             if layer_name.lower() == file_name.lower():
@@ -225,7 +239,8 @@ def generate_constraints(files):
         constraints = None
     else:
         constraints = constraints.split(';')
-    print(constraints)
+
+    print('Received constraints parameters:', constraints)
     logger.info('Constraints input: %s' %constraints)
     logger.info('Number of constraints: %s' %constraints)
 
@@ -233,14 +248,14 @@ def generate_constraints(files):
 
     if constraint_currentdevelopment == '' or constraint_currentdevelopment == 'None':  # if no extent passed
         constraint_currentdevelopment = None
-    print('current-development', constraint_currentdevelopment)
+    print('Received current-development input:', constraint_currentdevelopment)
 
     # input_str = 'greenbelt:0:25;sssi:0:30;development:1:50' # example input expected
     
     # loop through the constraint layers
     for layer in constraints:
         logger.info('Constraint layer to match: %s' %layer)
-        print('layer=',layer)
+        print('Trying to match for layer:',layer)
         
         if len(layer) == 0 or layer is None: break
         layer = layer.split(':')
@@ -250,10 +265,10 @@ def generate_constraints(files):
 
         # search list of files of file with layer name in
         for file in files:
-            file_name = file.split('.')[0]
-            file_name = file_name.split('/')[-1]
-            
-            logger.info('Checking file: %s' %file_name)
+            logger.info('Checking file: %s' % file)
+
+            # clean file name
+            file_name = clean_file_name(file)
             
             if layer_name.lower() == file_name.lower():
                 layer_path = file
@@ -264,6 +279,7 @@ def generate_constraints(files):
                 # copy the file into the outputs dir
                 copy_file(layer_path, join(data_path, output_dir, layer_path.split('/')[-1]))
                 logger.info('Copied matching file!')
+
         logger.info('-----')
     logger.info('Completed constraints')
 
@@ -294,7 +310,7 @@ def generate_constraints(files):
     logger.info('Completed development constraint')
     
     df = pd.DataFrame(data)
-    print(df.head())
+    print('Constraints:', df.head())
     df.to_csv(join(data_path, output_dir, 'constraints.csv'), index=False)
     logger.info('Written constraint csv')
 
@@ -370,9 +386,9 @@ logger.info('Log file established!')
 check_dir_exists(join(data_path, output_dir, outputs_data_dir))
 check_dir_exists(join(data_path, output_dir, outputs_meta_dir))
 
-# check for additional parameters to record in metedata file
+# check for additional parameters to record in metadata file
 
-# check for any meta data files
+# check for any metadata files
 metadata_files = find_metadata_files() #search for any existing metadata files (expect to find at least one from the population data)
 print('Metadata files', metadata_files)
 logger.info('Metadata files found: %s' %metadata_files)
