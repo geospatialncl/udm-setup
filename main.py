@@ -359,14 +359,18 @@ def generate_parameters():
     if coverage_threshold is None:
         coverage_threshold = 50.0
 
-    minimum_plot_size = getenv('minimum_plot_size')
-    if minimum_plot_size is None:
-        minimum_plot_size = 4
+    minimum_development_area = getenv('minimum_development_area')
+    if minimum_development_area is None:
+        minimum_development_area = 4
+
+    maximum_plot_size = getenv('maximum_plot_size')
+    if maximum_plot_size is None:
+        maximum_plot_size = 4
 
     with open(join(data_path, output_dir, 'parameters.csv'), 'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        writer.writerow(['density_from_raster', 'people_per_dwelling', 'coverage_threshold', 'minimum_plot_size'])
-        writer.writerow([density_from_raster, people_per_dwelling, coverage_threshold, minimum_plot_size])
+        writer.writerow(['density_from_raster', 'people_per_dwelling', 'coverage_threshold', 'minimum_development_area', 'maximum_plot_size'])
+        writer.writerow([density_from_raster, people_per_dwelling, coverage_threshold, minimum_development_area, maximum_plot_size])
     return
 
 

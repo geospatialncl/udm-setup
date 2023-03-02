@@ -32,7 +32,8 @@ Contains the parameter values for 4 parameters for the UDM model:
 * density_from_raster (integer: set to zero to derive density from current development and initial population - set to one to provide a density raster (density.asc))
 * people_per_dwelling (float: conversion factor from people_per_cell to people_per_cell)
 * coverage_threshold (float: percentage coverage threshold for combined constraint layers - cells above threshold are constrained)
-* minimum_plot_size (integer: minimum number of contiguous cells withing a zones which constitute a development plot)
+* minimum_development_area (integer: minimum number of contiguous cells within a zone which constitutes a development area)
+* maximum_plot_size (integer: maximum number of cells developed around most suitable cell in zone in each iteration of development spreading algorithm)
 
 ## Methods
 ### Passing data files
@@ -68,9 +69,13 @@ Float value for converting between people per cell and people per dwelling
 Float value for the threshold value at which a cell is considered occupied/full and can't be developed when all constraints have been merged
 * name: coverage_threshold
 
-#### minimum plot size
-Integer value for the number of cells which must be clustered together to consider for development
-* name: minimum_plot_size
+#### minimum development area
+Integer value for the minimum number of cells which must be clustered together to consider for development
+* name: minimum_development_area
+
+#### maximum plot size
+Integer value for the maximum number of cells developed around most suitable cell in zone in each iteration of development spreading algorithm
+* name: maximum_plot_size
 
 #### record extra parameters
 Allow alternative parameters to be noted, such as those based on the inclusion of weightings of layers.

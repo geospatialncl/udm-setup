@@ -52,10 +52,17 @@ spec:
         default: 50.0
         required: true
 
-      - name: minimum_plot_size
-        title: Minimum plot size
+      - name: minimum_development_area
+        title: Minimum development area
         type: number
         description: Minimum number of raster cells within a zone required for a development area
+        default: 4
+        required: true
+
+      - name: maximum_plot_size
+        title: Maximum plot size
+        type: number
+        description: Maximum number of cells developed around most suitable cell in zone in each iteration of development spreading algorithm
         default: 4
         required: true
 
